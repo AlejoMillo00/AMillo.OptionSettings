@@ -9,59 +9,72 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/AlejoMillo00/AMillo.InjectableServices">
+  <a href="https://github.com/AlejoMillo00/AMillo.ConfigurationSettings">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">InjectableServices</h3>
+  <h3 align="center">ConfigurationSettings</h3>
 
   <p align="center">
-    <a href="https://github.com/AlejoMillo00/AMillo.InjectableServices/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
-    <a href="https://github.com/AlejoMillo00/AMillo.InjectableServices/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
 ## About The Project
 
-Are you tired of large Program.cs / Startup.cs files, with lots and lots of service dependency injections? Well...You are lucky!
-
-InjectableServices is a simple feature that allows you to register your services without having to add them to the Program / Startup file, keeping them clean and smooth.
+ConfigurationSettings is a simple feature that allows you to register your configuration/setting classes without having to add them to the Program / Startup file, keeping them clean and smooth.
 
 Here's why this is good:
 * Cleaner and readable Program / Startup files, keep them small.
-* Make your services ready-to-use just as you finish creating them, you don't even need to go into the Program / Startup file.
+* Make your configuration/setting classes ready-to-use just as you finish creating them, you don't even need to go into the Program / Startup file.
 
 ## Getting Started
 
 ### Installation
 1. Install the package
    ```sh
-   Install-Package AMillo.InjectableServices
+   Install-Package AMillo.ConfigurationSettings
    ```
-2. Call the AddInjectableServices() extension method from AMillo.InjectableServices directive in your Program.cs / Startup.cs file <br/>
-   ![image](https://github.com/AlejoMillo00/AMillo.InjectableServices/assets/43641714/078ba33c-e047-4f86-9896-c12a429cfd73)
-
+2. Call the AddConfigurationSettings() or AddConfigurationSettingsFromAssemblies() extension method from AMillo.InjectableServices directive in your Program.cs / Startup.cs file
+   ```sh
+    //Option 1
+    builder.AddConfigurationSettings();
+    //Option 2
+    builder.AddConfigurationSettingsFromAssemblies(myAssemblies);
+    //Option 3
+    builder.Services.AddConfigurationSettings(myConfiguration);
+    //Option 4
+    builder.Services.AddConfigurationSettingsFromAssemblies(myAssemblies, myConfiguration);
+   ```
 ## Usage
 7
-Now that you installed the package and set up the feature in your Program.cs / Startup.cs file, you can start creating your services and registering them as follows:
+Now that you installed the package and set up the feature in your Program.cs / Startup.cs file, you can start creating your configuration/setting classes and registering them as follows:
 
-1. Mark your service interface with the <strong>[InjectableService]</strong> attribute. <br/>
-   ![image](https://github.com/AlejoMillo00/AMillo.InjectableServices/assets/43641714/8a6b058c-8bbd-452b-a6cb-a59a4d7a4b21) <br />
+1. Mark your configuraition/setting class with the <strong>[ConfigurationSetting("settingSectionName")]</strong> attribute
+   ```sh
+    [ConfigurationSettings("SampleConfiguration")]
+    public sealed class SampleConfiguration
+    {
+        public string SettingOne { get; set; } = string.Empty;
+        public string SettingTwo { get; set; } = string.Empty;
+    }
+   ```
 2. That's it! Your service will ge registered automatically on startup.
 
-### Service Lifetime
-By default, the <strong>[InjectableService]</strong> attribute will register your services as <strong>"Scoped"</strong>. 
-<br />
-But if you want, you can specify the lifetime for your service as follows: 
-<br/>
+### Important
 
-1. Mark your service interface with the <strong>[InjectableService]</strong> attribute passing the lifetime to the attribute's constructor. <br />
-   ![image](https://github.com/AlejoMillo00/AMillo.InjectableServices/assets/43641714/88636125-7f89-4330-ad98-7dcdc851575d) <br />
-2. That's it! Now your service will get register as Transient automatically on startup.
-
-<br >
-You can pass <strong>Scoped (default), Transient or Singleton</strong> as values for the <strong>[InjectableService]</strong> attribute's constructor, basically the <strong>ServiceLifetime</strong> enum values.
+You need to specify the <strong>"sectionName"</strong> to the attribute's constructor, this value needs to match the section in your AppSettings file from where you want your configuration/setting class get configured. <br /><br/>
+This is how the AppSettings.json file looks like for the previous example:
+```sh
+    {
+      "SampleConfiguration": {
+        "SettingOne": "valueOne",
+        "SettingTwo": "valueTwo"
+      }
+    }
+   ```
 
 ## Contributing
 
@@ -82,13 +95,13 @@ Alejo Millo - alejo.millo@outlook.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/AlejoMillo00/AMillo.InjectableServices.svg?style=for-the-badge
-[contributors-url]: https://github.com/AlejoMillo00/AMillo.InjectableServices/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/AlejoMillo00/AMillo.InjectableServices.svg?style=for-the-badge
-[forks-url]: https://github.com/AlejoMillo00/AMillo.InjectableServices/network/members
-[stars-shield]: https://img.shields.io/github/stars/AlejoMillo00/AMillo.InjectableServices.svg?style=for-the-badge
-[stars-url]: https://github.com/AlejoMillo00/AMillo.InjectableServices/stargazers
-[issues-shield]: https://img.shields.io/github/issues/AlejoMillo00/AMillo.InjectableServices.svg?style=for-the-badge
-[issues-url]: https://github.com/AlejoMillo00/AMillo.InjectableServices/issues
+[contributors-shield]: https://img.shields.io/github/contributors/AlejoMillo00/AMillo.ConfigurationSettings.svg?style=for-the-badge
+[contributors-url]: https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/AlejoMillo00/AMillo.ConfigurationSettings.svg?style=for-the-badge
+[forks-url]: https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/network/members
+[stars-shield]: https://img.shields.io/github/stars/AlejoMillo00/AMillo.ConfigurationSettings.svg?style=for-the-badge
+[stars-url]: https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/stargazers
+[issues-shield]: https://img.shields.io/github/issues/AlejoMillo00/AMillo.ConfigurationSettings.svg?style=for-the-badge
+[issues-url]: https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/issues
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/alejo-millo-77371a196/
