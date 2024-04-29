@@ -5,4 +5,6 @@ public sealed class ConfigurationSettingsAttribute(string sectionName) : Attribu
 {
     private readonly string _sectionName = sectionName;
     public string SectionName {  get { return _sectionName; } }
+    public bool ValidateDataAnnotations { get; init; } = false;
+    public bool ValidateOnStart { get; init; } = false;
 }
