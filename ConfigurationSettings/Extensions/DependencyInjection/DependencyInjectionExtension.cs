@@ -4,6 +4,8 @@ using AMillo.ConfigurationSettings.Attributes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using System;
 using System.Reflection;
 
 public static class DependencyInjectionExtension
@@ -18,28 +20,28 @@ public static class DependencyInjectionExtension
         builder.Services.AddConfigurationSettingsFromAssemblies(assemblies, builder.Configuration);
     }
 
+    public static void AddConfigurationSettingsFromAssembly(this IHostApplicationBuilder builder, Assembly assembly)
+    {
+        builder.Services.AddConfigurationSettingsFromAssemblies([assembly], builder.Configuration);
+    }
+
     public static void AddConfigurationSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddConfigurationSettingsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies(), configuration);
     }
 
+    public static void AddConfigurationSettingsFromAssembly(this IServiceCollection services, Assembly assembly, IConfiguration configuration)
+    {
+        services.AddConfigurationSettingsFromAssemblies([assembly], configuration);
+    }
+
     public static void AddConfigurationSettingsFromAssemblies(this IServiceCollection services, IEnumerable<Assembly> assemblies, IConfiguration configuration)
     {
-        MethodInfo? configureMethod = GetAddOptionsMethod();
-
-        if (configureMethod is null)
-        {
-            throw new InvalidOperationException(
-                "Couldn't get AddOptions generic methods.");
-        }
+        MethodInfo? addOptionsMethod = GetAddOptionsMethod();
+        ArgumentNullException.ThrowIfNull(addOptionsMethod);
 
         MethodInfo? bindMethod = GetBindMethod();
-
-        if (bindMethod is null)
-        {
-            throw new InvalidOperationException(
-                "Couldn't get Bind generic methods.");
-        }
+        ArgumentNullException.ThrowIfNull(bindMethod);
 
         MethodInfo? validateDataAnnotationsMethod = GetValidateDataAnnotationsMethod();
         MethodInfo? validateOnStartMethod = GetValidateOnStartMethod();
@@ -49,17 +51,13 @@ public static class DependencyInjectionExtension
             (string sectionName, bool validateDataAnnotations, bool validateOnStart) = 
                 GetAttributeData(configurationSetting);
 
-            MethodInfo configureMethodForCurrentSetting = configureMethod
+            MethodInfo configureMethodForCurrentSetting = addOptionsMethod
                 .MakeGenericMethod(configurationSetting);
 
             object? optionsBuilder = configureMethodForCurrentSetting
                 .Invoke(null, [services]);
 
-            if (optionsBuilder is null)
-            {
-                throw new InvalidOperationException(
-                    $"Couldn't get options builder for setting of type: {configurationSetting.FullName}");
-            }
+            ArgumentNullException.ThrowIfNull(optionsBuilder);
 
             MethodInfo bindMethodForCurrentSetting = bindMethod
                 .MakeGenericMethod(configurationSetting);
@@ -68,11 +66,67 @@ public static class DependencyInjectionExtension
                 .Invoke(null, [optionsBuilder, 
                     configuration.GetSection(sectionName)]);
 
+            ArgumentNullException.ThrowIfNull(optionsBuilder);
+
+            MethodInfo[] customValidationMethods = configurationSetting
+                 .GetMethods()
+                 .Where(m => m.CustomAttributes.Count() == 1 
+                    && m.CustomAttributes.First().AttributeType == typeof(ConfigurationSettingValidationAttribute))
+                 .ToArray();
+
+            foreach (MethodInfo customValidationMethod in customValidationMethods)
+            {               
+                Type funcType = typeof(Func<,>).MakeGenericType(configurationSetting, typeof(bool));
+                Delegate validationDelegate = Delegate.CreateDelegate(funcType, customValidationMethod);
+
+                Type optionsBuilderType = typeof(OptionsBuilder<>).MakeGenericType(configurationSetting);
+
+                string failureMessage = GetCustomValidationMethodFailureMessage(customValidationMethod);
+
+                if (string.IsNullOrEmpty(failureMessage))
+                {
+                    MethodInfo? validateMethod = optionsBuilderType
+                        .GetMethods()
+                        .FirstOrDefault(m => {
+                            if(m.Name != "Validate" || m.IsGenericMethod)
+                            {
+                                return false;
+                            }
+
+                            ParameterInfo[] parameters = m.GetParameters();
+                            return parameters.Length == 1
+                                && parameters[0].ParameterType == funcType;
+                        });
+                    ArgumentNullException.ThrowIfNull(validateMethod);
+
+                    validateMethod
+                        .Invoke(optionsBuilder, [validationDelegate]);
+                } 
+                else
+                {
+                    MethodInfo? validateMethodWithFailureMessage = optionsBuilderType
+                        .GetMethods()
+                        .FirstOrDefault(m => {
+                            if (m.Name != "Validate" || m.IsGenericMethod)
+                            {
+                                return false;
+                            }
+
+                            ParameterInfo[] parameters = m.GetParameters();
+                            return parameters.Length == 2
+                                && parameters[0].ParameterType == funcType
+                                && parameters[1].ParameterType == typeof(string);
+                        });
+                    ArgumentNullException.ThrowIfNull(validateMethodWithFailureMessage);
+
+                    validateMethodWithFailureMessage
+                        .Invoke(optionsBuilder, [validationDelegate, failureMessage]);
+                }
+            }
+
             if (validateDataAnnotations)
             {
-                if (validateDataAnnotationsMethod is null)
-                    throw new InvalidOperationException(
-                        "Couldn't get ValidateDataAnnotations generic method.");
+                ArgumentNullException.ThrowIfNull(validateDataAnnotationsMethod);
 
                 MethodInfo validateDataAnnotationsMethodForCurrentSetting = validateDataAnnotationsMethod
                 .MakeGenericMethod(configurationSetting);
@@ -83,9 +137,7 @@ public static class DependencyInjectionExtension
 
             if (validateOnStart)
             {
-                if (validateOnStartMethod is null)
-                    throw new InvalidOperationException(
-                        "Couldn't get ValidateOnStart generic method.");
+                ArgumentNullException.ThrowIfNull(validateOnStartMethod);
 
                 MethodInfo validateOnStartMethodForCurrentSetting = validateOnStartMethod
                 .MakeGenericMethod(configurationSetting);
@@ -100,22 +152,33 @@ public static class DependencyInjectionExtension
     {
         return typeof(OptionsServiceCollectionExtensions)
             .GetMethods()
-            .FirstOrDefault(method => method.Name == "AddOptions"
-            && method.IsGenericMethod
-            && method.GetGenericArguments().Length == 1
-            && method.GetParameters().Length == 1
-            && method.GetParameters()[0].ParameterType == typeof(IServiceCollection));
+            .FirstOrDefault(method => {
+                if(method.Name != "AddOptions" || !method.IsGenericMethod)
+                {
+                    return false;
+                }
+
+                ParameterInfo[] parameters = method.GetParameters();
+                return method.GetGenericArguments().Length == 1
+                && parameters.Length == 1
+                && parameters[0].ParameterType == typeof(IServiceCollection);
+            });
     }
 
     private static MethodInfo? GetBindMethod()
     {
         return typeof(OptionsBuilderConfigurationExtensions)
             .GetMethods()
-            .FirstOrDefault(method => method.Name == "Bind"
-            && method.IsGenericMethod
-            && method.GetGenericArguments().Length == 1
-            && method.GetParameters().Length == 2
-            && method.GetParameters()[1].ParameterType == typeof(IConfiguration));
+            .FirstOrDefault(method => {
+                if (method.Name != "Bind" || !method.IsGenericMethod)
+                {
+                    return false;
+                }
+                ParameterInfo[] parameters = method.GetParameters();
+                return method.GetGenericArguments().Length == 1
+                && parameters.Length == 2
+                && parameters[1].ParameterType == typeof(IConfiguration);
+            });
     }
 
     private static MethodInfo? GetValidateDataAnnotationsMethod()
@@ -150,18 +213,18 @@ public static class DependencyInjectionExtension
     {
         IList<CustomAttributeData> attributesData = configurationSetting.GetCustomAttributesData();
 
-        CustomAttributeData injectableAttributeData = attributesData
+        CustomAttributeData configurationSettingAttributeData = attributesData
             .First(a => a.AttributeType == typeof(ConfigurationSettingsAttribute));
 
-        CustomAttributeTypedArgument sectionNameArgument = injectableAttributeData
+        CustomAttributeTypedArgument sectionNameArgument = configurationSettingAttributeData
             .ConstructorArguments
             .First();
 
-        CustomAttributeNamedArgument validateDataAnnotationsArgument = injectableAttributeData
+        CustomAttributeNamedArgument validateDataAnnotationsArgument = configurationSettingAttributeData
             .NamedArguments
             .First(a => a.MemberName == "ValidateDataAnnotations" && a.TypedValue.ArgumentType == typeof(bool));
 
-        CustomAttributeNamedArgument validateOnStartArgument = injectableAttributeData
+        CustomAttributeNamedArgument validateOnStartArgument = configurationSettingAttributeData
             .NamedArguments
             .Last(a => a.MemberName == "ValidateOnStart" && a.TypedValue.ArgumentType == typeof(bool));
 
@@ -169,5 +232,19 @@ public static class DependencyInjectionExtension
             (string)(sectionNameArgument.Value ?? string.Empty), 
             (bool)(validateDataAnnotationsArgument.TypedValue.Value ?? false),
             (bool)(validateOnStartArgument.TypedValue.Value ?? false));
+    }
+
+    private static string GetCustomValidationMethodFailureMessage(MethodInfo customValidationMethod)
+    {
+        IList<CustomAttributeData> attributesData = customValidationMethod.GetCustomAttributesData();
+
+        CustomAttributeData configurationSettingAttributeData = attributesData
+            .First(a => a.AttributeType == typeof(ConfigurationSettingValidationAttribute));
+
+        CustomAttributeNamedArgument failureMessageArgument = configurationSettingAttributeData
+            .NamedArguments
+            .Last(a => a.MemberName == "FailureMessage" && a.TypedValue.ArgumentType == typeof(string));
+
+        return (string)(failureMessageArgument.TypedValue.Value ?? "A validation error has ocurred.");
     }
 }
