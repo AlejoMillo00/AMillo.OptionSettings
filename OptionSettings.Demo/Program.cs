@@ -35,12 +35,6 @@ builder.AddOptionSettings();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddOptions<SampleConfiguration>()
-    .Validate((some) =>
-    {
-        return true;
-    }, "NO SE PUEDE");
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
