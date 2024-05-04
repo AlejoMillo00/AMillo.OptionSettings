@@ -1,13 +1,10 @@
 ﻿namespace AMillo.OptionSettings.Extensions.DependencyInjection;
 
 using AMillo.OptionSettings.Attributes;
-using AMillo.OptionSettings.Models;
-using AMIllo.OptionSettings.Enums;
 using AMillo.OptionSettings.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using System;
 using System.Reflection;
 

@@ -1,6 +1,6 @@
-﻿using AMIllo.OptionSettings.Enums;
+﻿namespace AMillo.OptionSettings.Models;
 
-namespace AMillo.OptionSettings.Models;
+using AMIllo.OptionSettings.Enums;
 
 internal sealed class OptionSettingsAttributeData
 {
