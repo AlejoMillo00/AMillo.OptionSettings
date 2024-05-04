@@ -1,7 +1,7 @@
-﻿namespace AMillo.ConfigurationSettings.Attributes;
+﻿namespace AMillo.OptionSettings.Attributes;
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-public sealed class ConfigurationSettingValidationAttribute : Attribute
+public sealed class OptionSettingsValidationAttribute : Attribute
 {
     public string FailureMessage { get; init; } = string.Empty;
 }

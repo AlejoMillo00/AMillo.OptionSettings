@@ -1,12 +1,12 @@
-﻿namespace AMillo.ConfigurationSettings.Demo;
+﻿namespace AMillo.OptionSettings.Demo;
 
-using AMillo.ConfigurationSettings.Attributes;
+using AMillo.OptionSettings.Attributes;
+using AMIllo.OptionSettings.Enums;
 using System.ComponentModel.DataAnnotations;
 
-[ConfigurationSettings(
+[OptionSettings(
     sectionName: Constants.AppSettings.Sample, 
-    ValidateDataAnnotations = true,
-    ValidateOnStart = false)]
+    ValidationMode = ValidationMode.Startup)]
 internal sealed class SampleConfiguration
 {
     [Required]
@@ -19,7 +19,7 @@ internal sealed class SampleConfiguration
 
     public string SampleString { get; set; } = string.Empty;
 
-    [ConfigurationSettingValidation(FailureMessage = "SampleString can't contain vowels.")]
+    [OptionSettingsValidation(FailureMessage = "SampleString can't contain vowels.")]
     public static bool ValidateSampleString(SampleConfiguration options)
     {
         HashSet<char> vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
@@ -35,7 +35,7 @@ internal sealed class SampleConfiguration
         return true;
     }
 
-    [ConfigurationSettingValidation(FailureMessage = "SampleNumber must be 1 when SampleKey is 'one'")]
+    [OptionSettingsValidation(FailureMessage = "SampleNumber must be 1 when SampleKey is 'one'")]
     public static bool ValidateSampleNumber(SampleConfiguration options)
     {
         if(options.SampleKey == "one" && options.SampleNumber != 1)

@@ -1,4 +1,4 @@
-﻿namespace AMillo.ConfigurationSettings.Demo;
+﻿namespace AMillo.OptionSettings.Demo;
 
 internal sealed class Constants
 {

@@ -1,5 +1,5 @@
-using AMillo.ConfigurationSettings.Demo;
-using AMillo.ConfigurationSettings.Extensions.DependencyInjection;
+using AMillo.OptionSettings.Demo;
+using AMillo.OptionSettings.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Add all configuration classes marked with [ConfigurationSettings] attribute from all assemblies in the current AppDomain
 //Uses builder.Configuration by default to bind the settings
-builder.AddConfigurationSettings();
+builder.AddOptionSettings();
 
 //Add all configuration classes marked with [ConfigurationSettings] attribute from all assemblies in the current AppDomain
 //Also uses the specified configuration to bind the settings
