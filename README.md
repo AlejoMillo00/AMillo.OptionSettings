@@ -9,22 +9,22 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/AlejoMillo00/AMillo.ConfigurationSettings">
+  <a href="https://github.com/AlejoMillo00/AMillo.OptionSettings">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">ConfigurationSettings</h3>
+  <h3 align="center">OptionSettings</h3>
 
   <p align="center">
-    <a href="https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/AlejoMillo00/AMillo.OptionSettings/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
-    <a href="https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/AlejoMillo00/AMillo.OptionSettings/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
 ## About The Project
 
-ConfigurationSettings is a simple feature that allows you to register your configuration/setting classes without having to add them to the Program / Startup file, keeping them clean and smooth.
+OptionSettings is a simple feature that allows you to register your configuration/setting classes without having to add them to the Program / Startup file, keeping them clean and smooth.
 
 Here's why this is good:
 * Cleaner and readable Program / Startup files, keep them small.
@@ -95,13 +95,13 @@ Alejo Millo - alejo.millo@outlook.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/AlejoMillo00/AMillo.ConfigurationSettings.svg?style=for-the-badge
-[contributors-url]: https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/AlejoMillo00/AMillo.ConfigurationSettings.svg?style=for-the-badge
-[forks-url]: https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/network/members
-[stars-shield]: https://img.shields.io/github/stars/AlejoMillo00/AMillo.ConfigurationSettings.svg?style=for-the-badge
-[stars-url]: https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/stargazers
-[issues-shield]: https://img.shields.io/github/issues/AlejoMillo00/AMillo.ConfigurationSettings.svg?style=for-the-badge
-[issues-url]: https://github.com/AlejoMillo00/AMillo.ConfigurationSettings/issues
+[contributors-shield]: https://img.shields.io/github/contributors/AlejoMillo00/AMillo.OptionSettings.svg?style=for-the-badge
+[contributors-url]: https://github.com/AlejoMillo00/AMillo.OptionSettings/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/AlejoMillo00/AMillo.OptionSettings.svg?style=for-the-badge
+[forks-url]: https://github.com/AlejoMillo00/AMillo.OptionSettings/network/members
+[stars-shield]: https://img.shields.io/github/stars/AlejoMillo00/AMillo.OptionSettings.svg?style=for-the-badge
+[stars-url]: https://github.com/AlejoMillo00/AMillo.OptionSettings/stargazers
+[issues-shield]: https://img.shields.io/github/issues/AlejoMillo00/AMillo.OptionSettings.svg?style=for-the-badge
+[issues-url]: https://github.com/AlejoMillo00/AMillo.OptionSettings/issues
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/alejo-millo-77371a196/
