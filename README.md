@@ -9,10 +9,6 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/AlejoMillo00/AMillo.OptionSettings">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
-
   <h3 align="center">OptionSettings</h3>
 
   <p align="center">
@@ -26,7 +22,7 @@
 
 OptionSettings is a simple feature that allows you to register your configuration/setting classes without having to add them to the Program / Startup file, keeping them clean and smooth.
 
-Here's why this is good:
+* Follow best practices using Options Pattern
 * Cleaner and readable Program / Startup files, keep them small.
 * Make your configuration/setting classes ready-to-use just as you finish creating them, you don't even need to go into the Program / Startup file.
 
