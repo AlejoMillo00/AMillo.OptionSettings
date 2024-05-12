@@ -31,50 +31,78 @@ Here's why this is good:
 * Make your configuration/setting classes ready-to-use just as you finish creating them, you don't even need to go into the Program / Startup file.
 
 ## Getting Started
-
 ### Installation
-1. Install the package
-   ```sh
-   Install-Package AMillo.ConfigurationSettings
-   ```
-2. Call the AddConfigurationSettings() or AddConfigurationSettingsFromAssemblies() extension method from AMillo.InjectableServices directive in your Program.cs / Startup.cs file
-   ```sh
-    //Option 1
-    builder.AddConfigurationSettings();
-    //Option 2
-    builder.AddConfigurationSettingsFromAssemblies(myAssemblies);
-    //Option 3
-    builder.Services.AddConfigurationSettings(myConfiguration);
-    //Option 4
-    builder.Services.AddConfigurationSettingsFromAssemblies(myAssemblies, myConfiguration);
-   ```
-## Usage
-7
-Now that you installed the package and set up the feature in your Program.cs / Startup.cs file, you can start creating your configuration/setting classes and registering them as follows:
+- .NET CLI
+  ```sh
+  dotnet add package AMillo.OptionSettings --version 1.0.0
+  ```
+- Package Manager
+  ```sh
+  Install-Package AMillo.OptionSettings -Version 1.0.0
+  ```
+### Usage
+1. Add the following <strong>using</strong> directive on your Program.cs / Startup.cs file
+   <pre lang="cs">using AMillo.OptionSettings.Extensions.DependencyInjection;</pre>
+2. Call the <strong>AddOptionSettings</strong> extension method using one of the following overloads
+   - builder.AddOptionSettings()
+     <pre lang="cs">
+     //Add all configuration classes marked with [OptionSettings] attribute from all assemblies in the current AppDomain
+     //Uses builder.Configuration by default to bind the settings
+     builder.AddOptionSettings();</pre>
+   - builder.AddOptionSettingsFromAssemblies(IEnumerable<Assembly> assemblies)
+     <pre lang="cs">
+     //Add all configuration classes marked with [OptionSettings] attribute from specified assemblies
+     //Uses builder.Configuration by default to bind the settings
+     builder.AddOptionSettingsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()); 
+     </pre>
+   - builder.AddOptionSettingsFromAssembly(Assembly assembly)
+     <pre lang="cs">
+     //Add all configuration classes marked with [OptionSettings] attribute from specified assembly
+     //Uses builder.Configuration by default to bind the settings
+     builder.AddOptionSettingsFromAssembly(typeof(Program).Assembly);
+     </pre>
+   - builder.Services.AddOptionSettings(IConfiguration configuration)
+     <pre lang="cs">
+     //Add all configuration classes marked with [OptionSettings] attribute from all assemblies in the current AppDomain
+     //Also uses the specified configuration to bind the settings
+     builder.Services.AddOptionSettings(builder.Configuration);
+     </pre>
+   - builder.Services.AddOptionSettingsFromAssembly(Assembly assembly, IConfiguration configuration)
+     <pre lang="cs">
+     //Add all configuration classes marked with [OptionSettings] attribute from specified assembly
+     //Also uses the specified configuration to bind the settings
+     builder.Services.AddOptionSettingsFromAssembly(typeof(Program).Assembly, builder.Configuration);
+     </pre>
+   - builder.Services.AddOptionSettingsFromAssemblies(IEnumerable<Assembly> assemblies, IConfiguration configuration)
+     <pre lang="cs">
+     //Add all configuration classes marked with [ConfigurationSettings] attribute from specified assemblies
+     //Also uses the specified configuration to bind the settings
+     builder.Services.AddOptionSettingsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies(), builder.Configuration);
+     </pre>
+3. Mark your configuration class with the <strong>[OptionSettings]</strong> attribute.
+   <pre lang="cs">
+      using AMillo.OptionSettings.Attributes;
 
-1. Mark your configuraition/setting class with the <strong>[ConfigurationSetting("settingSectionName")]</strong> attribute
-   ```sh
-    [ConfigurationSettings("SampleConfiguration")]
-    public sealed class SampleConfiguration
-    {
-        public string SettingOne { get; set; } = string.Empty;
-        public string SettingTwo { get; set; } = string.Empty;
-    }
-   ```
-2. That's it! Your service will ge registered automatically on startup.
-
+      [OptionSettings(sectionName: Constants.AppSettings.Sample)]
+      internal sealed class SampleConfiguration
+      {
+          public string SampleKey { get; set; } = string.Empty;
+          public int SampleNumber { get; set; } = 0;
+      }
+   </pre>
+   
+4. That's it! Now you can start using you configuration class following the Options pattern with IOptions, IOptionsMonitor or IOptionsSnapshot.
+     
 ### Important
 
 You need to specify the <strong>"sectionName"</strong> to the attribute's constructor, this value needs to match the section in your AppSettings file from where you want your configuration/setting class get configured. <br /><br/>
 This is how the AppSettings.json file looks like for the previous example:
-```sh
-    {
-      "SampleConfiguration": {
-        "SettingOne": "valueOne",
-        "SettingTwo": "valueTwo"
-      }
-    }
-   ```
+<pre lang="json">
+  "SampleConfiguration": {
+    "SampleKey": "SomeKey",
+    "SampleNumber": 1234567890
+  }
+</pre>
 
 ## Contributing
 
