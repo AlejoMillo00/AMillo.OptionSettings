@@ -71,7 +71,7 @@ OptionSettings is a simple feature that allows you to register your configuratio
      </pre>
    - builder.Services.AddOptionSettingsFromAssemblies(IEnumerable<Assembly> assemblies, IConfiguration configuration)
      <pre lang="cs">
-     //Add all configuration classes marked with [ConfigurationSettings] attribute from specified assemblies
+     //Add all configuration classes marked with [OptionSettings] attribute from specified assemblies
      //Also uses the specified configuration to bind the settings
      builder.Services.AddOptionSettingsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies(), builder.Configuration);
      </pre>
