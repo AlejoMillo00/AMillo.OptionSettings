@@ -238,7 +238,6 @@ Don't forget to give the project a star! Thanks again!
 Alejo Millo - alejo.millo@outlook.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/AlejoMillo00/AMillo.OptionSettings.svg?style=for-the-badge
 [contributors-url]: https://github.com/AlejoMillo00/AMillo.OptionSettings/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/AlejoMillo00/AMillo.OptionSettings.svg?style=for-the-badge
