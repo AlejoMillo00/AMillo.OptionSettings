@@ -162,9 +162,16 @@ OptionSettings has full support for you to validate your configuration classes a
   }
 </pre>
 
-#### 3. You can also add multiple methods with the signature <strong>bool AnyMethodName(TOptions options)</strong> where <strong>TOptions</strong> is your configuration class, and mark them with the <strong>[OptionSettingsValidation]</strong> attribute. This allows you validate your configuration class values in more complex ways.
-
+#### 3. You can also add multiple validation methods and mark them with the *[OptionSettingsValidation]* attribute. This allows you validate your configuration class values in more complex ways.
+- The methods must have the following signature:
+  <pre lang="cs">
+    bool AnyMethodName(TOptions options)
+  </pre>
+  Where <strong>TOptions</strong> is your configuration class.
 - You can pass a <strong>FailureMessage</strong> to the <strong>[OptionSettingsValidation]</strong> attribute if you want to show a custom message if the validation fails.
+  <pre lang="cs">
+    [OptionSettingsValidation(FailureMessage = "Custom failure messsage")]
+  </pre>
 - The methods only returns <strong>true</strong> indicating the validation succeeded or <strong>false</strong> indicating the validation has failed.
 - These validations methods will run depending on the value you have configured into the <strong>ValidationMode</strong> option.
   
